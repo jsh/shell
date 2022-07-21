@@ -3,7 +3,8 @@
 
 do_cmd() {
     # do what the user asks
-    echo $*
+    # this is the 'e' (evaluate) step in "repl"
+    eval $*
 }
 
 repl() {
