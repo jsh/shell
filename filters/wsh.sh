@@ -11,16 +11,20 @@ setup() {
                 PS1='@ '  # default, non-root prompt
         fi
 }
+repl() {
+    # read-execute-print loop
+    while read -p "$PS1" line
+    do
+            process_line "$line"
+    done
+}
 process_line() {
-        eval "$*"  # analogous to calls to "execv()" in bash, zsh, et al.
+        eval "$*"  # analogous to calls to "execve()" in bash, zsh, et al.
 }
 shutdown() {
         echo "logging out" # executed on ^D
 }
 
 setup
-while read -p "$PS1" line
-do
-        process_line "$line"
-done
+repl
 shutdown
