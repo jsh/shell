@@ -10,8 +10,11 @@ read_rc_settings() {	# rc stands for "run commands"
 	[ -e $RCFILE ] &&    # if .pbshrc exists
         source $RCFILE   #   evaluate all statements in it 
 }
-set_built_in_defaults() {
+set_built_in_defaults() { # in bash, everything's in global scope
+    # shell variables
 	PS1='@ '
+    # builtin commands
+    hello() { echo "hello, jeff!"; }
 }
 repl() {
     # read-execute-print loop
