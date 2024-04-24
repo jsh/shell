@@ -18,12 +18,15 @@ set_built_in_defaults() { # in bash, everything's in global scope
 }
 repl() {
     # read-execute-print loop
-    while read -p "$PS1" line
-    do
+    while read -p "$PS1" line; do
         eval "$line"  # analogous to calls to "execve()" in bash, zsh, et al.
     done
 }
 set_built_in_defaults
 read_rc_settings
 [ $(id -u) = 0 ] && PS1='# '   # shortcut if…then
-repl
+if [ $# = 0 ]; then
+    repl
+else
+    cat $1 | repl
+fi
