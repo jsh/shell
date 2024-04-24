@@ -10,13 +10,25 @@ read_rc_settings() {	# rc stands for "run commands"
 	[ -e $RCFILE ] &&    # if .pbshrc exists
         source $RCFILE   #   evaluate all statements in it 
 }
-set_built_in_defaults() { # in bash, everything's in global scope
+set_built_in_defaults() {
+    # in bash, everything's in global scope by default
+    # but not exported to child processes
+
     # shell variables
 	PS1='@ '
+
     # builtin commands
     hello() { echo "hello, jeff!"; }
+    source()  # a builtin version
+    {
+        local line
+        while read line; do
+            eval $line;
+        done < $1  # first function argument, the file to source
+    }
 }
 repl() {
+	local line
     # read-execute-print loop
     while read -p "$PS1" line; do
         eval "$line"  # analogous to calls to "execve()" in bash, zsh, et al.
