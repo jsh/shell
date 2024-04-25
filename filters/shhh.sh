@@ -1,9 +1,11 @@
 #!/bin/bash
-#   shsh -- A shell written as a shell script
+#   shhh -- A shell written as a shell script
 #
 #   A not-very-functional shell, almost pseudocode.
 #   Observe that setting and dereferencing variables works,
 #   and has no effect on the parent shell from which it was forked.
+#
+#   It's pronounced "Shhh!" Don't tell anybody. :-)
 
 set_built_in_defaults() {
     # In bash, everything's in global scope by default.
@@ -23,7 +25,7 @@ set_built_in_defaults() {
     }
 }
 read_rc_settings() {                    # rc stands for "run commands"
-    local RCFILE=~/.shshrc              # the config file
+    local RCFILE=~/.shhhrc              # the config file
 	[ -e $RCFILE ] &&                   # if config exists
         source $RCFILE                  #   evaluate all statements in it 
 }
@@ -31,7 +33,7 @@ repl() {
 	local line
     # read-execute-print loop
     while read -p "$PS1" line; do       # PS1 is the user's prompt
-        eval "$line"                    # like calls to "execve()" in bash, zsh, et al.
+        eval "$line"                    # like "execve()" in bash, zsh, et al.
     done
 }
 set_built_in_defaults
