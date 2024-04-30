@@ -7,13 +7,16 @@
 #
 #   It's pronounced "Shhh!" Don't tell anybody. :-)
 
-set_built_in_defaults() {
-    # In bash, everything's in global scope by default.
-    # Globals are not exported to child processes.
-
-    # shell variables
-	PS1='@ '                            # default prompt, from Thompson shell
-
+config() {
+    setup_history
+    set_builtin_defaults
+}
+setup_history() {
+    set -o history                      # turn on history
+    HISTFILE=~/.shhh_history            # instead of ~/.bash_history
+    trap 'history -w' EXIT              # write out history list to $HISTFILE on exit
+}
+define_builtins() {
     # builtin commands
     hello() { echo "hello, jeff!"; }    # if this works, you're running this shell
     source()                            # builtin version! overrides bash builtin
@@ -24,6 +27,15 @@ set_built_in_defaults() {
         done < $1                       # first func argument, the file to source
     }
 }
+set_builtin_defaults() {
+    # In bash, everything's in global scope by default.
+    # Globals are not exported to child processes.
+
+    # shell variables
+	PS1='@ '                            # default prompt, from Thompson shell
+    set -i                              # mark shell interactive
+    set -m                              # monitor mode (enable job control)
+}
 read_rc_settings() {                    # rc stands for "run commands"
     local RCFILE=~/.shhhrc              # the config file
 	[ -e $RCFILE ] &&                   # if config exists
@@ -32,11 +44,13 @@ read_rc_settings() {                    # rc stands for "run commands"
 repl() {
 	local line
     # read-execute-print loop
-    while read -p "$PS1" line; do       # PS1 is the user's prompt
+    while read -ep "$PS1" line; do      # PS1 is the user's prompt, -e turns on readline editing
         eval "$line"                    # like "execve()" in bash, zsh, et al.
+        history -s -- "$line"           # store line in $HISTFILE
     done
 }
-set_built_in_defaults
+
+config
 read_rc_settings
 [ $(id -u) = 0 ] && PS1='# '            # shortcut if…then
 if [ $# = 0 ]; then
